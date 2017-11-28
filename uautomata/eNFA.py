@@ -52,7 +52,7 @@ class Node(object):
 
     def has_epsilon(self):
         for node in self.iter_nodes():
-            if self._outgoing_epsilon:
+            if node._outgoing_epsilon:
                 return True
         return False
 
@@ -70,7 +70,18 @@ class Node(object):
                 search.append(v.data)
 
     def remove_epsilon(self):
-        pass
+        if any(node.accepting for node in self.eclose()):
+            self.accepting = True
+
+        for node in self.iter_nodes():
+            for iv in node._outgoing_edges.items():
+                for edge_to in iv.data.eclose():
+                    if edge_to == iv.data:
+                        continue
+                    node._outgoing_edges[iv.begin:iv.end] = edge_to
+
+        for node in self.iter_nodes():
+            node._outgoing_epsilon = set()
 
     def to_dfa(self):
         pass

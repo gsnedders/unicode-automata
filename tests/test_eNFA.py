@@ -46,3 +46,40 @@ def test_utf16_max(s, matches):
     a.add_edge(0x10FFFF, b)
     a.to_utf16_code_units()
     assert a.match(s) is matches
+
+
+@pytest.mark.parametrize("s,matches", [
+    ("", True),
+    ("a", False),
+])
+def test_remove_epsilon(s, matches):
+    a = Node()
+    b = Node()
+    b.accepting = True
+    a.add_edge(EPSILON, b)
+    assert a.match(s) is matches
+    assert a.has_epsilon()
+    a.remove_epsilon()
+    assert a.match(s) is matches
+    assert not a.has_epsilon()
+
+
+@pytest.mark.parametrize("s,matches", [
+    ("", False),
+    ("a", True),
+    ("b", False),
+    ("ba", False),
+    ("aa", False),
+])
+def test_remove_epsilon_indirect_accepting(s, matches):
+    a = Node()
+    b = Node()
+    a.add_edge(ord("a"), b)
+    c = Node()
+    c.accepting = True
+    b.add_edge(EPSILON, c)
+    assert a.match(s) is matches
+    assert a.has_epsilon()
+    a.remove_epsilon()
+    assert a.match(s) is matches
+    assert not a.has_epsilon()
