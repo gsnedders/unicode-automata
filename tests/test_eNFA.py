@@ -2,7 +2,8 @@ from __future__ import absolute_import, division, unicode_literals
 
 import pytest
 
-from uautomata.eNFA import Node, EPSILON
+from uautomata.eNFA import EPSILON, Node
+
 
 @pytest.mark.parametrize("s,matches", [
     ("", True),
@@ -20,7 +21,7 @@ def test_empty(s, matches):
     ("b", False),
     ("ba", False),
     ("aa", False),
-])    
+])
 def test_single(s, matches):
     a = Node()
     b = Node()
@@ -37,7 +38,7 @@ def test_single(s, matches):
     ("\uDC00\uDFFF", False),
     ("\uDBFF\uDFFE", False),
     ("\uDBFF\uE000", False),
-])    
+])
 def test_utf16_max(s, matches):
     a = Node()
     b = Node()
